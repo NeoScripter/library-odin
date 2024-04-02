@@ -1,0 +1,95 @@
+@font-face {
+    font-family: "Cormorant Bold";
+    src: url(fonts/Cormorant-Bold.ttf);
+}
+
+@font-face {
+    font-family: "Cormorant Regular";
+    src: url(fonts/Cormorant-Regular.ttf);
+}
+
+@font-face {
+    font-family: "Cormorant Italic";
+    src: url(fonts/Cormorant-Italic.ttf);
+}
+
+p {
+    margin: 0;
+}
+
+body {
+    font-family: "Cormorant Regular";
+    background-color: rgb(43, 35, 30);
+    font-size: 1rem;
+    color: rgb(253, 232, 190);
+    word-wrap: break-word;
+    box-sizing: border-box;
+}
+
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+.library-body {
+    display: grid;
+    gap: 1rem;
+}
+
+.library_title {
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.row {
+    display: grid;
+    grid-auto-flow: column;
+   justify-content: center;
+    gap: 2em;
+    width: 2000px;
+    overflow-x: hidden;
+    border: 1px solid rgb(253, 232, 190);
+    background-color: rgb(253, 232, 190, 0.3);
+}
+
+.column {
+    display: grid;
+    gap: 1rem;
+    text-align: center;
+    width: 250px;
+}
+
+#primary {
+    position: relative;
+}
+
+.column > *:not(button) {
+    background-color: rgb(64, 46, 42);
+    padding: 1em 2em;
+    border: 1px solid rgb(253, 232, 190);
+}
+
+.column > * > *:nth-child(odd) {
+    font-family: "Cormorant Bold";
+    font-size: 1.3rem;
+    margin-bottom: 0.5em;
+}
+
+.prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    cursor: pointer;
+    z-index: 100;
+    height: 100px;
+    width: 2rem;
+    background-color: transparent;
+    color: rgb(253, 232, 190);
+    font-size: 1rem;
+}
+
+.prev { left: -31px; }
+.next { right: -31px; }

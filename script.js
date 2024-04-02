@@ -40,35 +40,61 @@ let currentIndex = 0;
 
 const primaryCard = document.getElementById('primary');
 
+let isEffectApplied = false; // Flag to track the state
+
 primaryCard.addEventListener('click', event => {
   const cardElement = event.currentTarget;
 
-  let delayIncrement = 200;
-  Object.entries(myLibrary[currentIndex]).forEach(([key, value], index) => {
-    const newCard = document.createElement('div');
-    newCard.classList.add('invisible');
+  if (!isEffectApplied) {
+    // Apply the effect
+    let delayIncrement = 200;
+    Object.entries(myLibrary[currentIndex]).forEach(([key, value], index) => {
+      if (key !== 'title') {
+        const newCard = document.createElement('div');
+        newCard.classList.add('invisible', 'dynamic-card');
 
-    const keyPara = document.createElement('p');
-    const valuePara = document.createElement('p');
+        const keyPara = document.createElement('p');
+        const valuePara = document.createElement('p');
 
-    const keyText = document.createTextNode(key.toUpperCase());
-    const valueText = document.createTextNode(value.toString());
-    keyPara.appendChild(keyText);
-    valuePara.appendChild(valueText);
+        const keyText = document.createTextNode(capitalizeFirstLetter(key));
+        const valueText = document.createTextNode(value.toString());
+        keyPara.appendChild(keyText);
+        valuePara.appendChild(valueText);
 
-    newCard.appendChild(keyPara);
-    newCard.appendChild(valuePara);
+        newCard.appendChild(keyPara);
+        newCard.appendChild(valuePara);
 
-    cardElement.appendChild(newCard);
+        cardElement.appendChild(newCard);
 
-    setTimeout(() => {
-      newCard.classList.add('move-to-place');
+        setTimeout(() => {
+          newCard.classList.add('move-to-place');
+          setTimeout(() => {
+            newCard.classList.remove('move-to-place');
+            newCard.classList.remove('invisible');
+          }, delayIncrement);
+        }, index * delayIncrement);
+      }
+    });
+    isEffectApplied = true;
+  } else {
+    let delayIncrement = 200;
+    let idx = 1;
+
+    // Convert NodeList to an array and reverse it
+    const cards = Array.from(document.querySelectorAll('.dynamic-card')).reverse();
+
+    cards.forEach(card => {
       setTimeout(() => {
-      newCard.classList.remove('move-to-place');
-      newCard.classList.remove('invisible');
-    }, delayIncrement);
-    }, index * delayIncrement);
-  });
+        card.style.zIndex = '-10';
+        card.classList.add('move-to-place');
+        setTimeout(() => {
+          card.remove(); // Remove the card after applying the class
+        }, delayIncrement); // Adjust the timing of removal to be in sequence with the delay
+      }, idx * delayIncrement);
+      idx += 1;
+    });
+    isEffectApplied = false;
+  }
 });
 
 
@@ -89,4 +115,8 @@ function addBookToLibrary() {
 function updateIndex(index, array) {
   index = (index + 1) % array.length;
   return index;
+}
+
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }

@@ -12,7 +12,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const row = document.querySelector('.row');
   const libraryLenght = myLibrary.length;
   const libraryMiddle = libraryLenght % 2 !== 0 ? Math.floor(libraryLenght / 2) : libraryLenght / 2 - 1;
-
+  currentIndex = libraryMiddle;
+  let currentEventHandler = null;
   assignThePrimaryColumn(row, myLibrary);
 
   for (const [index, book] of myLibrary.entries()) {
@@ -38,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   const primary = document.getElementById('primary');
-  addEventsToPrimary(primary, currentIndex);
+  currentEventHandler = addEventsToPrimary(primary, currentIndex);
   
   function addEventsToPrimary(primaryCard, currentIndex) {
     let isEffectApplied = false; // Flag to track the state
@@ -101,7 +102,6 @@ document.addEventListener('DOMContentLoaded', function() {
     return eventHandler; // Return the function reference
   }
   
-      let currentEventHandler = null;
       const nextButton = document.querySelector('.next');
       const prevButton = document.querySelector('.prev');
   
@@ -120,6 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
           }
           primary.removeAttribute('id');
           prevPrimary.id = 'primary';
+          currentIndex = decrementIndex(currentIndex, myLibrary);
           currentEventHandler = addEventsToPrimary(prevPrimary, currentIndex);
       });
   
@@ -138,6 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
           
           primary.removeAttribute('id');
           nextPrimary.id = 'primary';
+          currentIndex = incrementIndex(currentIndex, myLibrary);
           currentEventHandler = addEventsToPrimary(nextPrimary, currentIndex);
       });
 
@@ -149,6 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let nextPrimary;
         if (myLibrary.length % 2 === 0) {
           nextPrimary = primary.previousElementSibling;
+          currentIndex--;
         } else {
           nextPrimary = primary.nextElementSibling;
         }
@@ -183,10 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
             addBookToLibrary(title, author, pagesNum, edition, read);
             formOverlay.style.display = 'none';
     });
-  
-      function removeBookFromLibrary(currentIndex) {
-        myLibrary.splice(currentIndex, 1);
-      }
+
   
   function Book(title, author, pages, editionYear, read) {
     this.title = title;
@@ -222,8 +222,13 @@ document.addEventListener('DOMContentLoaded', function() {
     myLibrary.splice(currentIndex, 1);
   }
   
-  function updateIndex(index, array) {
+  function incrementIndex(index, array) {
     index = (index + 1) % array.length;
+    return index;
+  }
+
+  function decrementIndex(index, array) {
+    index = index !== 0 ? index - 1 : array.length - 1;
     return index;
   }
   

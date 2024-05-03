@@ -1,152 +1,163 @@
-const myLibrary = [
-  {
-    title: "To Kill a Mockingbird",
-    author: "Harper Lee",
-    pages: 281,
-    editionYear: 1960,
-    read: false
-  },
-  {
-    title: "1984",
-    author: "George Orwell",
-    pages: 328,
-    editionYear: 1949,
-    read: false
-  },
-  {
-    title: "Pride and Prejudice",
-    author: "Jane Austen",
-    pages: 432,
-    editionYear: 1813,
-    read: false
-  },
-  {
-    title: "Harry Potter",
-    author: "J.K. Rowling",
-    pages: 309,
-    editionYear: 1997,
-    read: false
-  },
-  {
-    title: "The Great Gatsby",
-    author: "F. Scott Fitzgerald",
-    pages: 180,
-    editionYear: 1925,
-    read: false
+document.addEventListener('DOMContentLoaded', function() {
+
+  const myLibrary = [
+    new Book("To Kill a Mockingbird", "Harper Lee", 281, 1960, false),
+    new Book("1984", "George Orwell", 328, 1949, false),
+    new Book("Pride and Prejudice", "Jane Austen", 432, 1813, false),
+    new Book("Harry Potter", "J.K. Rowling", 309, 1997, false),
+    new Book("The Great Gatsby", "F. Scott Fitzgerald", 180, 1925, false)
+  ];
+  
+  const row = document.querySelector('.row');
+  const libraryLenght = myLibrary.length;
+  const libraryMiddle = libraryLenght % 2 !== 0 ? Math.floor(libraryLenght / 2) : libraryLenght / 2 - 1;
+
+  function assignThePrimaryColumn(row, library) {
+    const libraryLenght = library.length;
+    if (libraryLenght % 2 === 0) {
+      row.style.paddingLeft = '282px';
+    } else {
+      row.style.paddingLeft = '0px';
+    }
   }
-];
 
-let currentIndex = 0;
-const primary = document.getElementById('primary');
-addEventsToPrimary(primary, currentIndex);
+  assignThePrimaryColumn(row, myLibrary);
 
-function addEventsToPrimary(primaryCard, currentIndex) {
-  let isEffectApplied = false; // Flag to track the state
+  for (const [index, book] of myLibrary.entries()) {
+    const column = document.createElement('div');
+    if (index === libraryMiddle) {
+      column.id = 'primary';
+    }
+    column.classList.add('column'); // Corrected: Remove the dot from 'classList.add()'
+  
+    const columnContent = document.createElement('div'); // Container for book titles
+  
+    const title = document.createElement('p');
+    title.textContent = 'Title'; // Static text indicating that the following text is a title
+  
+    const titleName = document.createElement('p');
+    titleName.textContent = book.title; // Corrected: Access the 'title' property of the book object
+  
+    columnContent.appendChild(title); // Append 'Title' to column content
+    columnContent.appendChild(titleName); // Append actual book title to column content
+  
+    column.appendChild(columnContent); // Append column content to column
+    row.appendChild(column); // Append column to the row
+  }
 
-primaryCard.addEventListener('click', event => {
-  const cardElement = event.currentTarget;
-
-  if (!isEffectApplied) {
-    // Apply the effect
-    let delayIncrement = 200;
-    Object.entries(myLibrary[currentIndex]).forEach(([key, value], index) => {
-      if (key !== 'title') {
-        const newCard = document.createElement('div');
-        newCard.classList.add('invisible', 'dynamic-card');
-
-        const keyPara = document.createElement('p');
-        const valuePara = document.createElement('p');
-
-        const keyText = document.createTextNode(capitalizeFirstLetter(key));
-        const valueText = document.createTextNode(value.toString());
-        keyPara.appendChild(keyText);
-        valuePara.appendChild(valueText);
-
-        newCard.appendChild(keyPara);
-        newCard.appendChild(valuePara);
-
-        cardElement.appendChild(newCard);
-
-        setTimeout(() => {
-          newCard.classList.add('move-to-place');
+  let currentIndex = 0;
+  const primary = document.getElementById('primary');
+  addEventsToPrimary(primary, currentIndex);
+  
+  function addEventsToPrimary(primaryCard, currentIndex) {
+    let isEffectApplied = false; // Flag to track the state
+  
+  primaryCard.addEventListener('click', event => {
+    const cardElement = event.currentTarget;
+  
+    if (!isEffectApplied) {
+      // Apply the effect
+      let delayIncrement = 200;
+      Object.entries(myLibrary[currentIndex]).forEach(([key, value], index) => {
+        if (key !== 'title') {
+          const newCard = document.createElement('div');
+          newCard.classList.add('invisible', 'dynamic-card');
+  
+          const keyPara = document.createElement('p');
+          const valuePara = document.createElement('p');
+  
+          const keyText = document.createTextNode(capitalizeFirstLetter(key));
+          const valueText = document.createTextNode(value.toString());
+          keyPara.appendChild(keyText);
+          valuePara.appendChild(valueText);
+  
+          newCard.appendChild(keyPara);
+          newCard.appendChild(valuePara);
+  
+          cardElement.appendChild(newCard);
+  
           setTimeout(() => {
-            newCard.classList.remove('move-to-place');
-            newCard.classList.remove('invisible');
-          }, delayIncrement);
-        }, index * delayIncrement);
-      }
-    });
-    isEffectApplied = true;
-  } else {
-    let delayIncrement = 200;
-    let idx = 1;
-
-    // Convert NodeList to an array and reverse it
-    const cards = Array.from(document.querySelectorAll('.dynamic-card')).reverse();
-
-    cards.forEach(card => {
-      setTimeout(() => {
-        card.style.zIndex = '-10';
-        card.classList.add('move-to-place');
+            newCard.classList.add('move-to-place');
+            setTimeout(() => {
+              newCard.classList.remove('move-to-place');
+              newCard.classList.remove('invisible');
+            }, delayIncrement);
+          }, index * delayIncrement);
+        }
+      });
+      isEffectApplied = true;
+    } else {
+      let delayIncrement = 200;
+      let idx = 1;
+  
+      // Convert NodeList to an array and reverse it
+      const cards = Array.from(document.querySelectorAll('.dynamic-card')).reverse();
+  
+      cards.forEach(card => {
         setTimeout(() => {
-          card.remove(); // Remove the card after applying the class
-        }, delayIncrement); // Adjust the timing of removal to be in sequence with the delay
-      }, idx * delayIncrement);
-      idx += 1;
-    });
-    isEffectApplied = false;
+          card.style.zIndex = '-10';
+          card.classList.add('move-to-place');
+          setTimeout(() => {
+            card.remove();
+          }, delayIncrement);
+        }, idx * delayIncrement);
+        idx += 1;
+      });
+      isEffectApplied = false;
+    }
+  });
+  }
+  
+      const nextButton = document.querySelector('.next');
+      const prevButton = document.querySelector('.prev');
+  
+      nextButton.addEventListener('click', function() {
+          const carousel = document.querySelector('.row');
+          const lastItem = carousel.querySelector('.column:last-child');
+          const firstItem = carousel.querySelector('.column');
+          carousel.removeChild(lastItem);
+          carousel.insertBefore(lastItem, firstItem);
+  
+          const primary = document.getElementById('primary');
+          const prevPrimary = primary.previousElementSibling;
+          primary.removeAttribute('id');
+          prevPrimary.id = 'primary';
+          addEventsToPrimary(prevPrimary, currentIndex);
+      });
+  
+      prevButton.addEventListener('click', function() {
+          const firstItem = document.querySelector('.column');
+          const carousel = document.querySelector('.row');
+          carousel.removeChild(firstItem);
+          carousel.appendChild(firstItem);
+  
+          const primary = document.getElementById('primary');
+          const nextPrimary = primary.nextElementSibling;
+          primary.removeAttribute('id');
+          nextPrimary.id = 'primary';
+          addEventsToPrimary(nextPrimary, currentIndex);
+      });
+  
+  
+  function Book(title, author, pages, editionYear, read) {
+    this.title = title;
+    this.author = author;
+    this.pages = pages;
+    this.editionYear = editionYear;
+    this.read = read;
+  }
+  
+  function addBookToLibrary(title, author, pages, editionYear, read) {
+    const newBook = new Book(title, author, pages, editionYear, read);
+    myLibrary.push(newBook);
+  }
+  
+  function updateIndex(index, array) {
+    index = (index + 1) % array.length;
+    return index;
+  }
+  
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
   }
 });
-}
-
-    const nextButton = document.querySelector('.next');
-    const prevButton = document.querySelector('.prev');
-
-    nextButton.addEventListener('click', function() {
-        const carousel = document.querySelector('.row');
-        const lastItem = carousel.querySelector('.column:last-child');
-        const firstItem = carousel.querySelector('.column');
-        carousel.removeChild(lastItem);
-        carousel.insertBefore(lastItem, firstItem);
-
-        const primary = document.getElementById('primary');
-        const prevPrimary = primary.previousElementSibling;
-        primary.removeAttribute('id');
-        prevPrimary.id = 'primary';
-        addEventsToPrimary(prevPrimary, currentIndex);
-    });
-
-    prevButton.addEventListener('click', function() {
-        const firstItem = document.querySelector('.column');
-        const carousel = document.querySelector('.row');
-        carousel.removeChild(firstItem);
-        carousel.appendChild(firstItem);
-
-        const primary = document.getElementById('primary');
-        const nextPrimary = primary.nextElementSibling;
-        primary.removeAttribute('id');
-        nextPrimary.id = 'primary';
-        addEventsToPrimary(nextPrimary, currentIndex);
-    });
-
-
-function Book(title, author, pages, editionYear, read) {
-  this.title = title;
-  this.author = author;
-  this.pages = pages;
-  this.editionYear = editionYear;
-  this.read = read;
-}
-
-function addBookToLibrary() {
-  // do stuff here
-}
-
-function updateIndex(index, array) {
-  index = (index + 1) % array.length;
-  return index;
-}
-
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}

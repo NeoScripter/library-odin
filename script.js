@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function addEventsToPrimary(primaryCard, currentIndex) {
     let isEffectApplied = false; // Flag to track the state
   
-  primaryCard.addEventListener('click', event => {
+    const eventHandler = event => {
     const cardElement = event.currentTarget;
   
     if (!isEffectApplied) {
@@ -96,9 +96,12 @@ document.addEventListener('DOMContentLoaded', function() {
       });
       isEffectApplied = false;
     }
-  });
+  };
+  primaryCard.addEventListener('click', eventHandler);
+    return eventHandler; // Return the function reference
   }
   
+      let currentEventHandler = null;
       const nextButton = document.querySelector('.next');
       const prevButton = document.querySelector('.prev');
   
@@ -111,9 +114,13 @@ document.addEventListener('DOMContentLoaded', function() {
   
           const primary = document.getElementById('primary');
           const prevPrimary = primary.previousElementSibling;
+
+          if (currentEventHandler) {
+            primary.removeEventListener('click', currentEventHandler);
+          }
           primary.removeAttribute('id');
           prevPrimary.id = 'primary';
-          addEventsToPrimary(prevPrimary, currentIndex);
+          currentEventHandler = addEventsToPrimary(prevPrimary, currentIndex);
       });
   
       prevButton.addEventListener('click', function() {
@@ -124,6 +131,11 @@ document.addEventListener('DOMContentLoaded', function() {
   
           const primary = document.getElementById('primary');
           const nextPrimary = primary.nextElementSibling;
+
+          if (currentEventHandler) {
+            primary.removeEventListener('click', currentEventHandler);
+          }
+          
           primary.removeAttribute('id');
           nextPrimary.id = 'primary';
           addEventsToPrimary(nextPrimary, currentIndex);
@@ -142,7 +154,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         primary.remove();
         nextPrimary.id = 'primary';
-        addEventsToPrimary(nextPrimary, currentIndex);
+        if (currentEventHandler) {
+          primary.removeEventListener('click', currentEventHandler);
+        }
+        currentEventHandler = addEventsToPrimary(nextPrimary, currentIndex);
       });
 
   

@@ -79,8 +79,14 @@ body {
 }
 
 #primary {
-    position: relative;
     cursor: pointer;
+}
+
+.title-wrapper {
+    position: relative;
+    width: 250px;
+    margin-inline: auto;
+    z-index: 2;
 }
 
 .column > *:not(button), .card {
@@ -107,11 +113,11 @@ body {
 
 .prev, .next {
     position: absolute;
-    top: 44px;
+    bottom: -84px;
     transform: translateY(-50%);
     border: none;
     cursor: pointer;
-    z-index: -2;
+    z-index: 2;
     width: 2rem;
     background-color: transparent;
     color: rgb(253, 232, 190);

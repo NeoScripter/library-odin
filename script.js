@@ -37,10 +37,11 @@ const myLibrary = [
 ];
 
 let currentIndex = 0;
+const primary = document.getElementById('primary');
+addEventsToPrimary(primary, currentIndex);
 
-const primaryCard = document.getElementById('primary');
-
-let isEffectApplied = false; // Flag to track the state
+function addEventsToPrimary(primaryCard, currentIndex) {
+  let isEffectApplied = false; // Flag to track the state
 
 primaryCard.addEventListener('click', event => {
   const cardElement = event.currentTarget;
@@ -96,8 +97,37 @@ primaryCard.addEventListener('click', event => {
     isEffectApplied = false;
   }
 });
+}
 
+    const nextButton = document.querySelector('.next');
+    const prevButton = document.querySelector('.prev');
 
+    nextButton.addEventListener('click', function() {
+        const carousel = document.querySelector('.row');
+        const lastItem = carousel.querySelector('.column:last-child');
+        const firstItem = carousel.querySelector('.column');
+        carousel.removeChild(lastItem);
+        carousel.insertBefore(lastItem, firstItem);
+
+        const primary = document.getElementById('primary');
+        const prevPrimary = primary.previousElementSibling;
+        primary.removeAttribute('id');
+        prevPrimary.id = 'primary';
+        addEventsToPrimary(prevPrimary, currentIndex);
+    });
+
+    prevButton.addEventListener('click', function() {
+        const firstItem = document.querySelector('.column');
+        const carousel = document.querySelector('.row');
+        carousel.removeChild(firstItem);
+        carousel.appendChild(firstItem);
+
+        const primary = document.getElementById('primary');
+        const nextPrimary = primary.nextElementSibling;
+        primary.removeAttribute('id');
+        nextPrimary.id = 'primary';
+        addEventsToPrimary(nextPrimary, currentIndex);
+    });
 
 
 function Book(title, author, pages, editionYear, read) {

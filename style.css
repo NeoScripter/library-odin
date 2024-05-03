@@ -39,23 +39,33 @@ body {
     gap: 1rem;
 }
 
-.library_title {
+.library-title {
     font-size: 1.5rem;
     text-align: center;
 }
 
+.title-external-wrapper {
+    margin-inline: auto;
+    display: flex;
+    gap: 2em;
+}
+
+.title-external-wrapper > * {
+    width: 250px;
+}
+
+.book-btn {
+    cursor: pointer;
+}
+
 .row {
     position: relative;
-/*     display: grid;
-    grid-auto-flow: column; */
     display: flex;
     justify-content: center;
     align-items: flex-start;
     gap: 2em;
     width: 20000px;
     overflow: hidden;
-/*     border: 1px solid rgb(253, 232, 190); */
-/*     background-color: rgb(253, 232, 190, 0.3); */
 }
 
 .fake_row {

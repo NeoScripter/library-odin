@@ -12,15 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const libraryLenght = myLibrary.length;
   const libraryMiddle = libraryLenght % 2 !== 0 ? Math.floor(libraryLenght / 2) : libraryLenght / 2 - 1;
 
-  function assignThePrimaryColumn(row, library) {
-    const libraryLenght = library.length;
-    if (libraryLenght % 2 === 0) {
-      row.style.paddingLeft = '282px';
-    } else {
-      row.style.paddingLeft = '0px';
-    }
-  }
-
   assignThePrimaryColumn(row, myLibrary);
 
   for (const [index, book] of myLibrary.entries()) {
@@ -28,21 +19,21 @@ document.addEventListener('DOMContentLoaded', function() {
     if (index === libraryMiddle) {
       column.id = 'primary';
     }
-    column.classList.add('column'); // Corrected: Remove the dot from 'classList.add()'
+    column.classList.add('column');
   
-    const columnContent = document.createElement('div'); // Container for book titles
+    const columnContent = document.createElement('div');
   
     const title = document.createElement('p');
-    title.textContent = 'Title'; // Static text indicating that the following text is a title
+    title.textContent = 'Title'; 
   
     const titleName = document.createElement('p');
-    titleName.textContent = book.title; // Corrected: Access the 'title' property of the book object
+    titleName.textContent = book.title; 
   
-    columnContent.appendChild(title); // Append 'Title' to column content
-    columnContent.appendChild(titleName); // Append actual book title to column content
+    columnContent.appendChild(title); 
+    columnContent.appendChild(titleName); 
   
-    column.appendChild(columnContent); // Append column content to column
-    row.appendChild(column); // Append column to the row
+    column.appendChild(columnContent); 
+    row.appendChild(column);
   }
 
   let currentIndex = 0;
@@ -137,7 +128,27 @@ document.addEventListener('DOMContentLoaded', function() {
           nextPrimary.id = 'primary';
           addEventsToPrimary(nextPrimary, currentIndex);
       });
+
+      const removeBtn = document.querySelector('.remove-book-btn');
+      removeBtn.addEventListener('click', () => {
+        removeBookFromLibrary(currentIndex);
+        assignThePrimaryColumn(row, myLibrary);
+        const primary = document.getElementById('primary');
+        let nextPrimary;
+        if (myLibrary.length % 2 === 0) {
+          nextPrimary = primary.previousElementSibling;
+        } else {
+          nextPrimary = primary.nextElementSibling;
+        }
+        primary.remove();
+        nextPrimary.id = 'primary';
+        addEventsToPrimary(nextPrimary, currentIndex);
+      });
+
   
+      function removeBookFromLibrary(currentIndex) {
+        myLibrary.splice(currentIndex, 1);
+      }
   
   function Book(title, author, pages, editionYear, read) {
     this.title = title;
@@ -151,6 +162,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const newBook = new Book(title, author, pages, editionYear, read);
     myLibrary.push(newBook);
   }
+
+  function removeBookFromLibrary(currentIndex) {
+    myLibrary.splice(currentIndex, 1);
+  }
   
   function updateIndex(index, array) {
     index = (index + 1) % array.length;
@@ -159,5 +174,14 @@ document.addEventListener('DOMContentLoaded', function() {
   
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
+  function assignThePrimaryColumn(row, library) {
+    const libraryLenght = library.length;
+    if (libraryLenght % 2 === 0) {
+      row.style.paddingLeft = '282px';
+    } else {
+      row.style.paddingLeft = '0px';
+    }
   }
 });

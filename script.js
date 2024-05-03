@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     new Book("The Great Gatsby", "F. Scott Fitzgerald", 180, 1925, false)
   ];
   
+  let currentIndex = 0;
   const row = document.querySelector('.row');
   const libraryLenght = myLibrary.length;
   const libraryMiddle = libraryLenght % 2 !== 0 ? Math.floor(libraryLenght / 2) : libraryLenght / 2 - 1;
@@ -36,7 +37,6 @@ document.addEventListener('DOMContentLoaded', function() {
     row.appendChild(column);
   }
 
-  let currentIndex = 0;
   const primary = document.getElementById('primary');
   addEventsToPrimary(primary, currentIndex);
   
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
           
           primary.removeAttribute('id');
           nextPrimary.id = 'primary';
-          addEventsToPrimary(nextPrimary, currentIndex);
+          currentEventHandler = addEventsToPrimary(nextPrimary, currentIndex);
       });
 
       const removeBtn = document.querySelector('.remove-book-btn');
@@ -160,6 +160,29 @@ document.addEventListener('DOMContentLoaded', function() {
         currentEventHandler = addEventsToPrimary(nextPrimary, currentIndex);
       });
 
+      const formOverlay = document.querySelector('.overlay');
+
+      const addBtn = document.querySelector('.add-book-btn');
+      addBtn.addEventListener('click', () => {
+        formOverlay.style.display = 'flex';
+      });
+      
+      const form = document.getElementById('add-book-form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const title = document.getElementById('title').value;
+            const author = document.getElementById('author').value;
+            const pages = document.getElementById('pages').value;
+            const editionYear = document.getElementById('edition').value;
+            const readOrNot = document.getElementById('read').value;
+            const read = readOrNot == "yes" ? true : false;
+            const pagesNum = parseInt(pages);
+            const edition = parseInt(editionYear);
+
+            addBookToLibrary(title, author, pagesNum, edition, read);
+            formOverlay.style.display = 'none';
+    });
   
       function removeBookFromLibrary(currentIndex) {
         myLibrary.splice(currentIndex, 1);
@@ -176,6 +199,23 @@ document.addEventListener('DOMContentLoaded', function() {
   function addBookToLibrary(title, author, pages, editionYear, read) {
     const newBook = new Book(title, author, pages, editionYear, read);
     myLibrary.push(newBook);
+    assignThePrimaryColumn(row, myLibrary);
+    const column = document.createElement('div');
+    column.classList.add('column');
+  
+    const columnContent = document.createElement('div');
+  
+    const bookTitle = document.createElement('p');
+    bookTitle.textContent = 'Title'; 
+  
+    const titleName = document.createElement('p');
+    titleName.textContent = title; 
+  
+    columnContent.appendChild(bookTitle); 
+    columnContent.appendChild(titleName); 
+  
+    column.appendChild(columnContent); 
+    row.appendChild(column);
   }
 
   function removeBookFromLibrary(currentIndex) {

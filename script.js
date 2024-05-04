@@ -68,6 +68,15 @@ document.addEventListener('DOMContentLoaded', function() {
           const valuePara = document.createElement('p');
   
           const keyText = document.createTextNode(capitalizeFirstLetter(key));
+          if (key === 'read') {
+            let textToInsert;
+            if (value === true) {
+              textToInsert = 'yes';
+            } else {
+              textToInsert = 'no';
+            }
+            value = textToInsert;
+          }
           const valueText = document.createTextNode(value.toString());
           keyPara.appendChild(keyText);
           valuePara.appendChild(valueText);

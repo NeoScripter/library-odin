@@ -8,38 +8,47 @@ document.addEventListener('DOMContentLoaded', function() {
     new Book("The Great Gatsby", "F. Scott Fitzgerald", 180, 1925, false)
   ];
   
+  let currentEventHandler = null;
   let currentIndex = 0;
   const row = document.querySelector('.row');
-  const libraryLenght = myLibrary.length;
-  const libraryMiddle = libraryLenght % 2 !== 0 ? Math.floor(libraryLenght / 2) : libraryLenght / 2 - 1;
-  currentIndex = libraryMiddle;
-  let currentEventHandler = null;
-  assignThePrimaryColumn(row, myLibrary);
 
-  for (const [index, book] of myLibrary.entries()) {
-    const column = document.createElement('div');
-    if (index === libraryMiddle) {
-      column.id = 'primary';
+  rearrangeLibrary();
+  function rearrangeLibrary() {
+    const columns = document.querySelectorAll('.column');
+    columns.forEach((column) => {
+      column.remove();
+    });
+    const libraryLenght = myLibrary.length;
+    const libraryMiddle = libraryLenght % 2 !== 0 ? Math.floor(libraryLenght / 2) : libraryLenght / 2 - 1;
+    currentIndex = libraryMiddle;
+    adjustPadding(row, myLibrary);
+
+  
+    for (const [index, book] of myLibrary.entries()) {
+      const column = document.createElement('div');
+      if (index === libraryMiddle) {
+        column.id = 'primary';
+      }
+      column.classList.add('column');
+    
+      const columnContent = document.createElement('div');
+    
+      const title = document.createElement('p');
+      title.textContent = 'Title'; 
+    
+      const titleName = document.createElement('p');
+      titleName.textContent = book.title; 
+    
+      columnContent.appendChild(title); 
+      columnContent.appendChild(titleName); 
+    
+      column.appendChild(columnContent); 
+      row.appendChild(column);
     }
-    column.classList.add('column');
   
-    const columnContent = document.createElement('div');
-  
-    const title = document.createElement('p');
-    title.textContent = 'Title'; 
-  
-    const titleName = document.createElement('p');
-    titleName.textContent = book.title; 
-  
-    columnContent.appendChild(title); 
-    columnContent.appendChild(titleName); 
-  
-    column.appendChild(columnContent); 
-    row.appendChild(column);
+    const primary = document.getElementById('primary');
+    currentEventHandler = addEventsToPrimary(primary, currentIndex);
   }
-
-  const primary = document.getElementById('primary');
-  currentEventHandler = addEventsToPrimary(primary, currentIndex);
   
   function addEventsToPrimary(primaryCard, currentIndex) {
     let isEffectApplied = false; // Flag to track the state
@@ -146,21 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const removeBtn = document.querySelector('.remove-book-btn');
       removeBtn.addEventListener('click', () => {
         removeBookFromLibrary(currentIndex);
-        assignThePrimaryColumn(row, myLibrary);
-        const primary = document.getElementById('primary');
-        let nextPrimary;
-        if (myLibrary.length % 2 === 0) {
-          nextPrimary = primary.previousElementSibling;
-          currentIndex--;
-        } else {
-          nextPrimary = primary.nextElementSibling;
-        }
-        primary.remove();
-        nextPrimary.id = 'primary';
-        if (currentEventHandler) {
-          primary.removeEventListener('click', currentEventHandler);
-        }
-        currentEventHandler = addEventsToPrimary(nextPrimary, currentIndex);
+        rearrangeLibrary();
       });
 
       const formOverlay = document.querySelector('.overlay');
@@ -171,77 +166,70 @@ document.addEventListener('DOMContentLoaded', function() {
       });
       
       const form = document.getElementById('add-book-form');
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
+      form.addEventListener('submit', function(event) {
+          event.preventDefault();
 
-            const title = document.getElementById('title').value;
-            const author = document.getElementById('author').value;
-            const pages = document.getElementById('pages').value;
-            const editionYear = document.getElementById('edition').value;
-            const readOrNot = document.getElementById('read').value;
-            const read = readOrNot == "yes" ? true : false;
-            const pagesNum = parseInt(pages);
-            const edition = parseInt(editionYear);
+          const title = document.getElementById('title').value;
+          const author = document.getElementById('author').value;
+          const pages = document.getElementById('pages').value;
+          const editionYear = document.getElementById('edition').value;
+          const readOrNot = document.getElementById('read').value;
+          const read = readOrNot == "yes" ? true : false;
+          const pagesNum = parseInt(pages);
+          const edition = parseInt(editionYear);
 
-            addBookToLibrary(title, author, pagesNum, edition, read);
-            formOverlay.style.display = 'none';
-    });
+          addBookToLibrary(title, author, pagesNum, edition, read);
+
+          formOverlay.style.display = 'none';
+
+          form.reset();
+      });
+
+
+      const closeBtn = document.querySelector('.close-form-btn');
+      closeBtn.addEventListener('click', () => {
+        formOverlay.style.display = 'none';
+      });
 
   
-  function Book(title, author, pages, editionYear, read) {
-    this.title = title;
-    this.author = author;
-    this.pages = pages;
-    this.editionYear = editionYear;
-    this.read = read;
-  }
-  
-  function addBookToLibrary(title, author, pages, editionYear, read) {
-    const newBook = new Book(title, author, pages, editionYear, read);
-    myLibrary.push(newBook);
-    assignThePrimaryColumn(row, myLibrary);
-    const column = document.createElement('div');
-    column.classList.add('column');
-  
-    const columnContent = document.createElement('div');
-  
-    const bookTitle = document.createElement('p');
-    bookTitle.textContent = 'Title'; 
-  
-    const titleName = document.createElement('p');
-    titleName.textContent = title; 
-  
-    columnContent.appendChild(bookTitle); 
-    columnContent.appendChild(titleName); 
-  
-    column.appendChild(columnContent); 
-    row.appendChild(column);
-  }
+      function Book(title, author, pages, editionYear, read) {
+        this.title = title;
+        this.author = author;
+        this.pages = pages;
+        this.editionYear = editionYear;
+        this.read = read;
+      }
+      
+      function addBookToLibrary(title, author, pages, editionYear, read) {
+        const newBook = new Book(title, author, pages, editionYear, read);
+        myLibrary.push(newBook);
+        rearrangeLibrary();
+      }
 
-  function removeBookFromLibrary(currentIndex) {
-    myLibrary.splice(currentIndex, 1);
-  }
-  
-  function incrementIndex(index, array) {
-    index = (index + 1) % array.length;
-    return index;
-  }
+      function removeBookFromLibrary(currentIndex) {
+        myLibrary.splice(currentIndex, 1);
+      }
+      
+      function incrementIndex(index, array) {
+        index = (index + 1) % array.length;
+        return index;
+      }
 
-  function decrementIndex(index, array) {
-    index = index !== 0 ? index - 1 : array.length - 1;
-    return index;
-  }
-  
-  function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
+      function decrementIndex(index, array) {
+        index = index !== 0 ? index - 1 : array.length - 1;
+        return index;
+      }
+      
+      function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+      }
 
-  function assignThePrimaryColumn(row, library) {
-    const libraryLenght = library.length;
-    if (libraryLenght % 2 === 0) {
-      row.style.paddingLeft = '282px';
-    } else {
-      row.style.paddingLeft = '0px';
-    }
-  }
+      function adjustPadding(row, library) {
+        const libraryLenght = library.length;
+        if (libraryLenght % 2 === 0) {
+          row.style.paddingLeft = '282px';
+        } else {
+          row.style.paddingLeft = '0px';
+        }
+      }
 });

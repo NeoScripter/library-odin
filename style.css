@@ -160,6 +160,7 @@ body {
     align-items: center;
     flex-direction: column;
     padding: 40px;
+    position: relative;
 }
 
 input {
@@ -178,4 +179,22 @@ button[type='submit'] {
     color: rgb(253, 232, 190);
     background-color: rgb(64, 46, 42);
     padding: 0.5em 1em;
+}
+
+.close-form-btn {
+    position: absolute;
+    right: 2px;
+    top: 2px;
+    border: 2px solid rgb(253, 232, 190);
+    color: rgb(253, 232, 190);
+    background-color: rgb(64, 46, 42);
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    font-size: 30px;
+    font-weight: 800;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 5px;
 }
